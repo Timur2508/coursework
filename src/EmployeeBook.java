@@ -1,287 +1,206 @@
+public class EmployeeBook {
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class EmployeeBook implements EmployeeService {
-    private final Map<String, Employee> employees;
-
-    public EmployeeBook() {
-        this.employees = new HashMap<>();
+    public EmployeeBook(int employeesNumber) {
+        this.employeeBook = new Employee[employeesNumber];
     }
 
-    @Override
-    public void addEmployee(Employee employee) {
-        employees.put(employee.getFullName(), employee);
+    public EmployeeBook(Employee[] employeeBook) {
+        this.employeeBook = employeeBook;
     }
 
-    /**
-     * Удаляет сотрудника по ФИО
-     *
-     * @param fullName String
-     */
-    @Override
-    public void removeEmployee(String fullName) {
-        if (employees.containsKey(fullName)) {
-            employees.remove(fullName);
-            System.out.printf("Сотрудник %s успешно удален!%n", fullName);
-        } else {
-            System.out.printf("Сотрудник %s не найден!%n", fullName);
-        }
-    }
+    private final Employee[] employeeBook;
 
-    @Override
-    public void removeEmployee(int id) {
-        for (Employee employee : employees.values()) {
-            if (employee.getId() == id) {
-                String key = employee.getFullName();
-                employees.remove(key);
-                System.out.printf("Сотрудник %s (id: %d) успешно удален!%n", key, id);
-                return;
+    public boolean addEmployee(Employee newEmployee) {
+        for (int i = 0; i < employeeBook.length; i++) {
+            if (employeeBook[i] == null) {
+                employeeBook[i] = newEmployee;
+                System.out.println("Сотрудник " + employeeBook[i].getName() + " принят на работу");
+                return true;
             }
         }
-        System.out.printf("Сотрудник с id %d не найден!%n", id);
+        System.out.println("Найм нового сотрудника невозможен, нет мест в штатном расписании");
+        return false;
     }
 
-    public void setSalaryByName(String fullName, int newSalary) {
-        Employee foundEmployee = findEmployeeByFullName(fullName);
-        if (foundEmployee != null) {
-            foundEmployee.setSalary(newSalary);
-            System.out.printf("Зарплата сотрудника %s изменена. Новая зарплата: %d руб.%n", fullName, newSalary);
-        } else {
-            System.out.printf("Сотрудник %s не найден!%n", fullName);
+    public Employee findEmployee(int id) {
+        for (Employee employee : employeeBook) {
+            if (employee != null) {
+                if (employee.getId() == id) {
+                    return employee;
+                }
+            }
         }
-    }
-
-    public void setDepartmentByName(String fullName, int newDepartment) {
-        Employee foundEmployee = findEmployeeByFullName(fullName);
-        if (foundEmployee != null) {
-            foundEmployee.setDepartment(newDepartment);
-            System.out.printf("Отдел сотрудника %s изменён. Новый отдел: %d%n", fullName, newDepartment);
-        } else {
-            System.out.printf("Сотрудник %s не найден!%n", fullName);
-        }
-    }
-
-    /**
-     * Ищет сотрудника по ФИО
-     *
-     * @param fullName String
-     * @return Employee|null - если сотрудник не найден, возвращает null
-     */
-    private Employee findEmployeeByFullName(String fullName) {
-        if (employees.containsKey(fullName)) {
-            return employees.get(fullName);
-        }
+        System.out.println("Сотрудник не найден");
         return null;
     }
 
-    /**
-     * Получает массив сотрудников одного отдела длиной исходного массива
-     *
-     * @param department int
-     * @return employees Employee
-     */
-    private Map<String, Employee> getEmployeesByDepartment(int department) {
-        Map<String, Employee> employeesDepartment = new HashMap<>();
-        for (Employee employee : employees.values()) {
-            if (employee.getDepartment() == department) {
-                employeesDepartment.put(employee.getFullName(), employee);
+    public boolean removeEmployee(int id) {
+        Employee employeeToRemove = findEmployee(id);
+        for (int i = 0; i < employeeBook.length; i++) {
+            if (employeeBook[i].equals(findEmployee(id))) {
+                System.out.println("Cотрудник " + employeeBook[i].getName() + " уволен");
+                employeeBook[i] = null;
+                return true;
             }
         }
-        return employeesDepartment;
+        System.out.println("Сотрудник не найден, увольнение невозможно");
+        return false;
     }
 
-    /**
-     * Выводит методом toString() все данные о всех сотрудниках
-     */
-    public void printAllEmployeesData() {
-        for (Employee employee : employees.values()) {
-            System.out.println(employee);
-        }
-    }
-
-    /**
-     * Считает общую зарплату за месяц
-     *
-     * @return int
-     */
-    public int calcTotalMonthlySalary() {
-        int total = 0;
-        for (Employee employee : employees.values()) {
-            total += employee.getSalary();
-        }
-        return total;
-    }
-
-    /**
-     * Считает общую зарплату за месяц по отделу
-     *
-     * @param department int - номер отдела
-     * @return int
-     */
-    public int calcTotalMonthlySalary(int department) {
-        Map<String, Employee> departmentEmployees = getEmployeesByDepartment(department);
-        int total = 0;
-        for (Employee employee : departmentEmployees.values()) {
+    public void printEmployees() {
+        System.out.println("Полная информация о сотрудниках компании:");
+        for (Employee employee : employeeBook) {
             if (employee != null) {
-                System.out.println(employee.getFullName() + " | " + employee.getSalary());
-                total += employee.getSalary();
-            }
-        }
-        return total;
-    }
-
-    public Employee getEmployeeWithMinSalary() {
-        return getEmployeeWithMinSalary(employees);
-    }
-
-    public Employee getEmployeeWithMinSalary(int department) {
-        Map<String, Employee> departmentEmployees = getEmployeesByDepartment(department);
-        return getEmployeeWithMinSalary(departmentEmployees);
-    }
-
-    /**
-     * Получает объект сотрудника с минимальной зарплатой
-     *
-     * @param employees Employee
-     * @return Employee
-     */
-    private Employee getEmployeeWithMinSalary(Map<String, Employee> employees) {
-        int min = Integer.MAX_VALUE;
-        Employee employee = null;
-        for (Employee emp : employees.values()) {
-            if (emp.getSalary() < min) {
-                min = emp.getSalary();
-                employee = emp;
-            }
-        }
-        return employee;
-    }
-
-    public Employee getEmployeeWithMaxSalary() {
-        return getEmployeeWithMaxSalary(employees);
-    }
-
-    public Employee getEmployeeWithMaxSalary(int department) {
-        Map<String, Employee> departmentEmployees = getEmployeesByDepartment(department);
-        return getEmployeeWithMaxSalary(departmentEmployees);
-    }
-
-    /**
-     * Получает сотрудника с максимальной зарплатой
-     *
-     * @param employees Employee
-     * @return String
-     */
-    private Employee getEmployeeWithMaxSalary(Map<String, Employee> employees) {
-        int max = Integer.MIN_VALUE;
-        Employee employee = null;
-        for (Employee emp : employees.values()) {
-            if (emp.getSalary() > max) {
-                max = emp.getSalary();
-                employee = emp;
-            }
-        }
-        return employee;
-    }
-
-    public double calcAverageMonthlySalary() {
-        return (double) calcTotalMonthlySalary() / getSize();
-    }
-
-    public double calcAverageMonthlySalary(int department) {
-        Map<String, Employee> departmentEmployees = getEmployeesByDepartment(department);
-        return (double) calcTotalMonthlySalary(department) / departmentEmployees.size();
-    }
-
-    /**
-     * Индексирует зарплату всех сотрудников
-     *
-     * @param percent int
-     */
-    public void changeEmployeesSalary(int percent) {
-        double coefficient = 1 + percent / 100D;
-        for (Employee employee : employees.values()) {
-            employee.setSalary((int) (employee.getSalary() * coefficient));
-        }
-    }
-
-    /**
-     * Индексирует зарплату сотрудников по отделу
-     *
-     * @param percent    int
-     * @param department int
-     */
-    public void changeEmployeesSalary(int percent, int department) {
-        Map<String, Employee> departmentEmployees = getEmployeesByDepartment(department);
-        for (Employee employee : departmentEmployees.values()) {
-            int salary = employee.getSalary() + employee.getSalary() * percent / 100;
-            employee.setSalary(salary);
-        }
-    }
-
-    /**
-     * Выводит в консоль список сотрудников с зарплатой больше заданного числа или равной
-     *
-     * @param benchmark int
-     */
-    public void printEmployeesWithSalaryHigherThanBenchmark(int benchmark) {
-        for (Employee employee : employees.values()) {
-            if (employee.getSalary() >= benchmark) {
                 System.out.println(employee);
             }
         }
     }
 
-    /**
-     * Выводит в консоль список сотрудников с зарплатой меньше заданного числа
-     *
-     * @param benchmark int
-     */
-    public void printEmployeesWithSalaryLowerThanBenchmark(int benchmark) {
-        for (Employee employee : employees.values()) {
-            if (employee.getSalary() < benchmark) {
-                System.out.println(employee);
+    public double calculateSalaryFund() {
+        double sum = 0;
+        for (Employee employee : employeeBook) {
+            if (employee != null) {
+                sum += employee.getSalary();
             }
         }
+        return sum;
     }
 
-    /**
-     * Выводит на экран список сотрудников по каждому отделу
-     */
-    public void printAllEmployeesDataGroupedByDepartment() {
-        for (int i = 1; i <= 5; i++) {
-            System.out.println("Отдел " + i);
-            Map<String, Employee> departmentEmployees = getEmployeesByDepartment(i);
-            if (departmentEmployees.size() > 0) {
-                for (Employee employee : departmentEmployees.values()) {
-                    System.out.println(employee.getFullName());
+    public Employee findMinSalary() {
+        double minSalary = employeeBook[0].getSalary();
+        Employee minSalaryEmployee = employeeBook[0];
+        for (Employee employee : employeeBook) {
+            if (employee != null) {
+                if (employee.getSalary() < minSalary) {
+                    minSalaryEmployee = employee;
+                    minSalary = employee.getSalary();
                 }
-            } else {
-                System.out.println("В отделе нет сотрудников");
+            }
+        }
+        return minSalaryEmployee;
+    }
+
+    public Employee findMaxSalary() {
+        double maxSalary = employeeBook[0].getSalary();
+        Employee maxSalaryEmployee = employeeBook[0];
+        for (Employee employee : employeeBook) {
+            if (employee != null) {
+                if (employee.getSalary() > maxSalary) {
+                    maxSalaryEmployee = employee;
+                    maxSalary = employee.getSalary();
+                }
+            }
+        }
+        return maxSalaryEmployee;
+    }
+
+    public double calculateAverageSalary() {
+        double averageSalary = 0;
+        int numberOfEmployees = 0;
+        for (Employee employee : employeeBook) {
+            if (employee != null) {
+                numberOfEmployees++;
+            }
+        }
+        System.out.println("Всего сотрудников: " + numberOfEmployees);
+        if (numberOfEmployees != 0) {
+            averageSalary = Math.floor(calculateSalaryFund() / numberOfEmployees);
+        }
+        return averageSalary;
+    }
+
+    public void printEmployeesNames() {
+        System.out.println("Список сотрудников:");
+        for (Employee employee : employeeBook) {
+            if (employee != null) {
+                System.out.println(employee.getName());
             }
         }
     }
 
-    public void printEmployeesFullNames() {
-        for (Employee employee : employees.values()) {
-            System.out.println(employee.getFullName());
+    public void indexAllSalaries(double percent) {
+        for (Employee employee : employeeBook) {
+            if (employee != null) {
+                double salary = Math.floor(employee.getSalary() * 100 * (1 + percent / 100) / 100);
+                employee.setSalary(salary);
+            }
+        }
+        System.out.println("Зарплата проиндексирована всем сотрудникам компании на " + percent + " процентов");
+    }
+
+    public Employee[] deptEmployeesArray(int department) {
+        Employee[] deptEmployees = new Employee[employeeBook.length];
+        int numberOfDeptEmployees = 0;
+        for (Employee employee : employeeBook) {
+            if (employee != null && employee.getDepartment() == department) {
+                deptEmployees[numberOfDeptEmployees] = employee;
+                numberOfDeptEmployees++;
+            }
+        }
+        return deptEmployees;
+    }
+
+    public Employee findMinDeptSalary(int department) {
+        Employee[] deptEmployees = deptEmployeesArray(department);
+        EmployeeBook deptEmployeeBook = new EmployeeBook(deptEmployees);
+        return deptEmployeeBook.findMinSalary();
+    }
+
+    public Employee findMaxDeptSalary(int department) {
+        Employee[] deptEmployees = deptEmployeesArray(department);
+        EmployeeBook deptEmployeeBook = new EmployeeBook(deptEmployees);
+        return deptEmployeeBook.findMaxSalary();
+    }
+
+    public double calculateDeptSalaryFund(int department) {
+        Employee[] deptEmployees = deptEmployeesArray(department);
+        EmployeeBook deptEmployeeBook = new EmployeeBook(deptEmployees);
+        return deptEmployeeBook.calculateSalaryFund();
+    }
+
+    public double calculateAverageDeptSalary(int department) {
+        Employee[] deptEmployees = deptEmployeesArray(department);
+        EmployeeBook deptEmployeeBook = new EmployeeBook(deptEmployees);
+        return deptEmployeeBook.calculateAverageSalary();
+    }
+
+    public void indexDeptSalaries(int department, double percent) {
+        for (Employee employee : employeeBook) {
+            if (employee != null && employee.getDepartment() == department) {
+                double salary = Math.floor(employee.getSalary() * 100 * (1 + percent / 100) / 100);
+                employee.setSalary(salary);
+            }
         }
     }
 
-    /**
-     * Выводит на экран данные сотрудников одного отдела
-     *
-     * @param department int
-     */
-    public void printDepartmentEmployeesData(int department) {
-        Map<String, Employee> departmentEmployees = getEmployeesByDepartment(department);
-        for (Employee employee : departmentEmployees.values()) {
-            System.out.println(employee.getEmployeeData());
+    public void printDeptEmployeesNames(int department) {
+        Employee[] deptEmployees = deptEmployeesArray(department);
+        System.out.println("Отдел " + department + ".");
+        EmployeeBook deptEmployeeBook = new EmployeeBook(deptEmployees);
+        deptEmployeeBook.printEmployeesNames();
+    }
+
+    public void findLessThanDeptSalary(int department, double salary) {
+        Employee[] deptEmployees = deptEmployeesArray(department);
+        System.out.println("В отделе " + department + " З/П меньше, чем " + salary + " у следующих сотрудников:");
+        for (Employee employee : deptEmployees) {
+            if (employee != null) {
+                if (employee.getSalary() < salary) {
+                    System.out.println("Сотрудник: " + employee.getName() + ", табельный номер: " + employee.getId() + ", З/П: " + employee.getSalary());
+                }
+            }
         }
     }
 
-    public int getSize() {
-        return employees.size();
+    public void findBiggerThanDeptSalary(int department, double salary) {
+        Employee[] deptEmployees = deptEmployeesArray(department);
+        System.out.println("В отделе " + department + " З/П больше, чем " + salary + " у следующих сотрудников:");
+        for (Employee employee : deptEmployees) {
+            if (employee != null) {
+                if (employee.getSalary() > salary) {
+                    System.out.println("Сотрудник: " + employee.getName() + ", табельный номер: " + employee.getId() + ", З/П: " + employee.getSalary());
+                }
+            }
+        }
     }
 }

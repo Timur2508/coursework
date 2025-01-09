@@ -2,64 +2,47 @@ import java.util.Objects;
 
 public class Employee {
 
-    private final String fullName;
-    private int salary; // зарплата
-    private int department; // отдел
-    private static int counter = 1; // счётчик
-    private final int id; // поле id, которое проставляется из счетчика
+    private final String name;
+    private int department;
+    private double salary;
+    private final int id;
+    private static int counter;
 
-    public Employee(
-            String fullName,
-            int salary,
-            int department
-    ) {
-        this.fullName = fullName;
-        this.salary = salary;
+
+
+    public Employee(String name, int department, double salary) {
+        this.name = name;
         this.department = department;
-        this.id = counter++;
+        this.salary = salary;
+        id = counter++;
     }
 
-    public String getFullName() {
-        return fullName;
+    public void setDepartment(byte department) {
+        this.department = department;
     }
 
-    public int getSalary() {
-        return salary;
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getDepartment() {
         return department;
     }
 
-    public static int getCounter() {
-        return counter;
+    public double getSalary() {
+        return salary;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setSalary(int salary) {
-        this.salary = Math.max(salary, 0);
-    }
-
-    public void setDepartment(int department) {
-        this.department = (department >= 1 && department <= 5) ? department : 1;
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "ID: %d, ФИО: %s, ЗП: %d, отдел: %d",
-                id,
-                getFullName(),
-                salary,
-                department
-        );
-    }
-
-    public String getEmployeeData() {
-        return "ID: " + getId() + " | ФИО: " + getFullName() + " | зарплата: " + getSalary();
+    public static int getCounter() {
+        return counter;
     }
 
     @Override
@@ -67,11 +50,16 @@ public class Employee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return fullName.equals(employee.fullName);
+        return id == employee.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullName);
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Сотрудник: " + name + ", табельный номер: " + id + ", отдел: " + department + ", З/П: " + salary;
     }
 }
