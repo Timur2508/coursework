@@ -24,12 +24,11 @@ public class EmployeeBook {
 
     public Employee findEmployee(int id) {
         for (Employee employee : employeeBook) {
-            if (employee != null) {
-                if (employee.getId() == id) {
-                    return employee;
-                }
+            if (employee != null && employee.getId() == id) {
+                return employee;
             }
         }
+
         System.out.println("Сотрудник не найден");
         return null;
     }
@@ -70,13 +69,11 @@ public class EmployeeBook {
         double minSalary = employeeBook[0].getSalary();
         Employee minSalaryEmployee = employeeBook[0];
         for (Employee employee : employeeBook) {
-            if (employee != null) {
-                if (employee.getSalary() < minSalary) {
+            if (employee != null && employee.getSalary() < minSalary) {
                     minSalaryEmployee = employee;
                     minSalary = employee.getSalary();
                 }
             }
-        }
         return minSalaryEmployee;
     }
 
@@ -84,13 +81,11 @@ public class EmployeeBook {
         double maxSalary = employeeBook[0].getSalary();
         Employee maxSalaryEmployee = employeeBook[0];
         for (Employee employee : employeeBook) {
-            if (employee != null) {
-                if (employee.getSalary() > maxSalary) {
+            if (employee != null && employee.getSalary() > maxSalary) {
                     maxSalaryEmployee = employee;
                     maxSalary = employee.getSalary();
                 }
             }
-        }
         return maxSalaryEmployee;
     }
 
@@ -184,10 +179,8 @@ public class EmployeeBook {
         Employee[] deptEmployees = deptEmployeesArray(department);
         System.out.println("В отделе " + department + " З/П меньше, чем " + salary + " у следующих сотрудников:");
         for (Employee employee : deptEmployees) {
-            if (employee != null) {
-                if (employee.getSalary() < salary) {
-                    System.out.println("Сотрудник: " + employee.getName() + ", табельный номер: " + employee.getId() + ", З/П: " + employee.getSalary());
-                }
+            if (employee != null && employee.getSalary() < salary) {
+                System.out.println("Сотрудник: " + employee.getName() + ", табельный номер: " + employee.getId() + ", З/П: " + employee.getSalary());
             }
         }
     }
@@ -196,10 +189,8 @@ public class EmployeeBook {
         Employee[] deptEmployees = deptEmployeesArray(department);
         System.out.println("В отделе " + department + " З/П больше, чем " + salary + " у следующих сотрудников:");
         for (Employee employee : deptEmployees) {
-            if (employee != null) {
-                if (employee.getSalary() > salary) {
-                    System.out.println("Сотрудник: " + employee.getName() + ", табельный номер: " + employee.getId() + ", З/П: " + employee.getSalary());
-                }
+            if (employee != null && employee.getSalary() > salary) {
+                System.out.println("Сотрудник: " + employee.getName() + ", табельный номер: " + employee.getId() + ", З/П: " + employee.getSalary());
             }
         }
     }

@@ -3,7 +3,7 @@ public class Main {
 
         EmployeeBook employeeBook = new EmployeeBook(10);
         Employee ivanov1 = new Employee("Иванов Иван Иванович", 1, 100000);
-        employeeBook.addEmployee(ivanov1); // записываем его в массив сотрудников
+        employeeBook.addEmployee(ivanov1);
         Employee petrov1 = new Employee("Петров Петр Петрович", 2, 120000);
         employeeBook.addEmployee(petrov1);
         Employee ivanov2 = new Employee("Иванов Иван Иванович", 1, 100000);
